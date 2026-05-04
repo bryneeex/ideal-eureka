@@ -8,8 +8,8 @@ const PORT = process.env.PORT || 3000;
 // Discord Webhook URL
 const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1500836394602332244/OZEjil1yUPySeyS_q0Tx3qKoE_2UFOwycesIXH4PdaC6DU7T6hoDEsJRePIYVFcJ1oKL';
 
-// Google Sheets Webhook URL (isi setelah deploy Google Apps Script)
-const GOOGLE_SHEETS_URL = process.env.GOOGLE_SHEETS_URL || '';
+// Google Sheets Webhook URL
+const GOOGLE_SHEETS_URL = 'https://script.google.com/macros/s/AKfycbyO6L7YDKhzXMmZallonSp_iSP5yCPgovGq1Rvu0DvAOoVSgyJ2ab-2Nvno2LrkPeYM/exec';
 
 // Middleware
 app.use(cors());
