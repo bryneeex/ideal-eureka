@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login POS - tantingmur Cafe</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="landing.css">
+</head>
+<body class="login-body">
+
+    <div class="login-container">
+        <div class="login-logo">
+            <i class="fa-solid fa-cube"></i>
+            <span>tantingmur Cafe</span>
+        </div>
+        <p class="login-subtitle">Sistem Point of Sale (POS) & Inventaris</p>
+
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" placeholder="Masukkan username" required autocomplete="off">
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Masukkan password" required>
+            </div>
+            
+            <div class="login-error" id="loginError">
+                <i class="fa-solid fa-circle-exclamation"></i> Username atau password salah!
+            </div>
+
+            <button type="submit" class="btn-login">
+                Masuk ke Sistem <i class="fa-solid fa-arrow-right" style="margin-left: 8px;"></i>
+            </button>
+        </form>
+        
+        <div style="margin-top: 24px; font-size: 13px; color: #64748b;">
+            <a href="index.html" style="color: #64748b; text-decoration: none;"><i class="fa-solid fa-arrow-left"></i> Kembali ke Halaman Utama</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const user = document.getElementById('username').value;
+            const pass = document.getElementById('password').value;
+            const errorMsg = document.getElementById('loginError');
+            const btn = document.querySelector('.btn-login');
+            const container = document.querySelector('.login-container');
+
+            const originalBtnHtml = btn.innerHTML;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Memverifikasi...';
+            btn.disabled = true;
+
+            try {
+                const response = await fetch('/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username: user, password: pass })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    errorMsg.style.display = 'none';
+                    // Store user info in localStorage if needed later
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    
+                    // Redirect to POS
+                    window.location.href = 'pos.html';
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (err) {
+                // Show Error
+                btn.innerHTML = originalBtnHtml;
+                btn.disabled = false;
+                errorMsg.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> ' + (err.message || 'Username atau password salah!');
+                errorMsg.style.display = 'block';
+                
+                // Shake animation
+                container.style.animation = 'none';
+                container.offsetHeight; /* trigger reflow */
+                container.style.animation = 'shake 0.4s ease';
+            }
+        });
+    </script>
+
+    <style>
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+    </style>
+</body>
+</html>

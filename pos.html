@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>tantingmur Cafe - Sistem Penjualan & Inventaris</title>
+    <!-- Modern Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fa-solid fa-cube"></i>
+                <span>tantingmur Cafe</span>
+            </div>
+            <nav class="nav-menu">
+                <a href="#" class="nav-item active" data-target="pos">
+                    <i class="fa-solid fa-cash-register"></i>
+                    <span>Kasir (POS)</span>
+                </a>
+                <a href="#" class="nav-item" data-target="inventory">
+                    <i class="fa-solid fa-box"></i>
+                    <span>Stok & Inventaris</span>
+                </a>
+                <a href="#" class="nav-item" data-target="reports">
+                    <i class="fa-solid fa-chart-pie"></i>
+                    <span>Laporan & Analitik</span>
+                </a>
+                <a href="#" class="nav-item" data-target="settings">
+                    <i class="fa-solid fa-gear"></i>
+                    <span>Pengaturan</span>
+                </a>
+            </nav>
+            <div class="user-profile">
+                <img src="https://i.pravatar.cc/150?img=11" alt="User Avatar" class="avatar">
+                <div class="user-info">
+                    <h4>Muhammad Fardhan Ilmansyah</h4>
+                    <p>Kasir Utama</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- POS View (Phase 1 MVP) -->
+            <section id="pos-view" class="view-section active">
+                <div class="pos-header">
+                    <div class="search-bar">
+                        <i class="fa-solid fa-search"></i>
+                        <input type="text" id="search-product"
+                            placeholder="Cari produk via nama, SKU, atau scan barcode...">
+                    </div>
+                    <div class="header-actions">
+                        <button class="icon-btn" title="Notifikasi Stok Tipis">
+                            <i class="fa-solid fa-bell"></i>
+                            <span class="badge">2</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Product Categories -->
+                <div class="categories">
+                    <button class="category-btn active" data-category="all">Semua Produk</button>
+                    <button class="category-btn" data-category="makanan">Makanan</button>
+                    <button class="category-btn" data-category="minuman">Minuman</button>
+                    <button class="category-btn" data-category="snack">Camilan & Snack</button>
+                </div>
+
+                <!-- Product Grid -->
+                <div class="product-grid" id="product-grid">
+                    <!-- Products will be injected by JavaScript -->
+                </div>
+            </section>
+
+            <!-- Inventory View -->
+            <section id="inventory-view" class="view-section">
+                <div class="pos-header" style="margin-bottom: 24px;">
+                    <h2>Stok & Inventaris</h2>
+                </div>
+                <div
+                    style="background: var(--bg-main); border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="background: var(--bg-secondary); border-bottom: 1px solid var(--border);">
+                                <th style="padding: 16px; color: var(--text-secondary); font-weight: 500;">SKU</th>
+                                <th style="padding: 16px; color: var(--text-secondary); font-weight: 500;">Nama Produk
+                                </th>
+                                <th style="padding: 16px; color: var(--text-secondary); font-weight: 500;">Harga</th>
+                                <th style="padding: 16px; color: var(--text-secondary); font-weight: 500;">Stok Saat Ini
+                                </th>
+                                <th
+                                    style="padding: 16px; color: var(--text-secondary); font-weight: 500; text-align: center;">
+                                    Aksi (Tambah/Kurang)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventory-table-body">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Reports View -->
+            <section id="reports-view" class="view-section">
+                <div class="pos-header" style="margin-bottom: 24px;">
+                    <h2>Laporan Hari Ini</h2>
+                    <button class="btn-secondary" style="padding: 8px 16px;" onclick="fetchReports()"><i
+                            class="fa-solid fa-arrows-rotate"></i> Refresh</button>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px;">
+                    <!-- Card 1: Omset -->
+                    <div
+                        style="background: var(--glass-bg); padding: 32px; border-radius: var(--radius-lg); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 24px;">
+                        <div
+                            style="background: rgba(16, 185, 129, 0.2); color: var(--success); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">
+                            <i class="fa-solid fa-rupiah-sign"></i>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-secondary); font-size: 16px; margin-bottom: 8px;">Total Omset
+                                (Hari Ini)</p>
+                            <h2 style="font-size: 32px; color: var(--text-primary);" id="report-revenue">Rp 0</h2>
+                        </div>
+                    </div>
+
+                    <!-- Card 2: Transaksi -->
+                    <div
+                        style="background: var(--glass-bg); padding: 32px; border-radius: var(--radius-lg); border: 1px solid var(--glass-border); display: flex; align-items: center; gap: 24px;">
+                        <div
+                            style="background: rgba(59, 130, 246, 0.2); color: var(--accent); width: 64px; height: 64px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 28px;">
+                            <i class="fa-solid fa-receipt"></i>
+                        </div>
+                        <div>
+                            <p style="color: var(--text-secondary); font-size: 16px; margin-bottom: 8px;">Jumlah
+                                Transaksi (Hari Ini)</p>
+                            <h2 style="font-size: 32px; color: var(--text-primary);" id="report-orders">0</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    style="margin-top: 32px; background: var(--bg-main); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border);">
+                    <h3 style="margin-bottom: 16px; color: var(--text-secondary);"><i
+                            class="fa-solid fa-circle-info"></i> Catatan Sistem</h3>
+                    <p style="color: var(--text-secondary); line-height: 1.6;">Laporan di atas ditarik secara otomatis
+                        dari database (tabel orders) berdasarkan tanggal hari ini. Data akan direset (kembali ke nol
+                        pada tampilan ini) pada pergantian hari besok secara otomatis.</p>
+                </div>
+            </section>
+
+            <!-- Settings View -->
+            <!-- Settings View (Product Management) -->
+            <section id="settings-view" class="view-section">
+                <div class="pos-header" style="margin-bottom: 24px;">
+                    <h2>Pengaturan & Manajemen Produk</h2>
+                    <button class="btn-primary" style="padding: 8px 16px;"
+                        onclick="document.getElementById('add-product-form').style.display='block'">
+                        <i class="fa-solid fa-plus"></i> Tambah Produk
+                    </button>
+                </div>
+
+                <!-- Add Product Form (Hidden by default) -->
+                <div id="add-product-form"
+                    style="display: none; background: var(--bg-main); padding: 24px; border-radius: var(--radius-lg); border: 1px solid var(--border); margin-bottom: 24px;">
+                    <h3 style="margin-bottom: 16px;">Tambah Produk Baru</h3>
+                    <form id="newProductForm" style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div>
+                            <label style="display:block; margin-bottom: 8px; color: var(--text-secondary);">SKU / Kode
+                                Barang</label>
+                            <input type="text" id="new-sku" required
+                                style="width: 100%; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: white;"
+                                placeholder="Misal: FOD-005">
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom: 8px; color: var(--text-secondary);">Nama
+                                Produk</label>
+                            <input type="text" id="new-name" required
+                                style="width: 100%; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: white;">
+                        </div>
+                        <div>
+                            <label
+                                style="display:block; margin-bottom: 8px; color: var(--text-secondary);">Kategori</label>
+                            <select id="new-category" required
+                                style="width: 100%; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: white;">
+                                <option value="makanan">Makanan</option>
+                                <option value="minuman">Minuman</option>
+                                <option value="snack">Snack</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom: 8px; color: var(--text-secondary);">Harga
+                                (Rp)</label>
+                            <input type="number" id="new-price" required
+                                style="width: 100%; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: white;">
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom: 8px; color: var(--text-secondary);">Stok
+                                Awal</label>
+                            <input type="number" id="new-stock" required
+                                style="width: 100%; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: white;">
+                        </div>
+                        <div>
+                            <label style="display:block; margin-bottom: 8px; color: var(--text-secondary);">URL Gambar
+                                (Opsional)</label>
+                            <input type="text" id="new-image"
+                                style="width: 100%; padding: 12px; background: var(--bg-secondary); border: 1px solid var(--border); border-radius: 8px; color: white;"
+                                placeholder="https://...">
+                        </div>
+                        <div
+                            style="grid-column: 1 / -1; display: flex; gap: 12px; justify-content: flex-end; margin-top: 8px;">
+                            <button type="button" class="btn-secondary"
+                                onclick="document.getElementById('add-product-form').style.display='none'">Batal</button>
+                            <button type="submit" class="btn-primary" style="padding: 12px 24px;"><i
+                                    class="fa-solid fa-save"></i> Simpan Produk</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div
+                    style="background: var(--bg-main); border-radius: var(--radius-lg); border: 1px solid var(--border); overflow: hidden;">
+                    <table style="width: 100%; border-collapse: collapse; text-align: left;">
+                        <thead>
+                            <tr style="background: var(--bg-secondary); border-bottom: 1px solid var(--border);">
+                                <th style="padding: 16px; color: var(--text-secondary); font-weight: 500;">Gambar</th>
+                                <th style="padding: 16px; color: var(--text-secondary); font-weight: 500;">SKU</th>
+                                <th style="padding: 16px; color: var(--text-secondary); font-weight: 500;">Nama &
+                                    Kategori</th>
+                                <th style="padding: 16px; color: var(--text-secondary); font-weight: 500;">Harga</th>
+                                <th
+                                    style="padding: 16px; color: var(--text-secondary); font-weight: 500; text-align: center;">
+                                    Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="management-table-body">
+                            <!-- Injected by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+
+        <!-- Right Sidebar (Cart / Current Order) -->
+        <aside class="cart-sidebar">
+            <div class="cart-header">
+                <h2>Pesanan Saat Ini</h2>
+                <span class="order-id">#ORD-1042</span>
+            </div>
+
+            <div class="cart-items" id="cart-items">
+                <!-- Cart items injected by JS -->
+                <div class="empty-cart">
+                    <i class="fa-solid fa-basket-shopping"></i>
+                    <p>Keranjang masih kosong</p>
+                </div>
+            </div>
+
+            <div class="cart-summary">
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span id="subtotal">Rp 0</span>
+                </div>
+                <div class="summary-row">
+                    <span>Pajak (11%)</span>
+                    <span id="tax">Rp 0</span>
+                </div>
+                <div class="summary-row total">
+                    <span>Total Pembayaran</span>
+                    <span id="total">Rp 0</span>
+                </div>
+            </div>
+
+            <div class="cart-actions">
+                <button class="btn-secondary" id="btn-save-bill" title="Simpan keranjang untuk dibayar nanti">
+                    <i class="fa-solid fa-clock"></i> Simpan Bill
+                </button>
+                <button class="btn-primary" id="btn-pay">
+                    <i class="fa-solid fa-credit-card"></i> Bayar Sekarang
+                </button>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Application Logic -->
+    <script src="app.js"></script>
+</body>
+
+</html>
