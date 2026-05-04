@@ -26,7 +26,7 @@ app.post('/api/auth/login', async (req, res) => {
     }
     try {
         const result = await pool.query(
-            "SELECT id, username, role FROM users WHERE username = $1 AND password = $2",
+            "SELECT id, username, full_name, role FROM users WHERE username = $1 AND password = $2",
             [username, password]
         );
         if (result.rows.length > 0) {
@@ -53,7 +53,7 @@ app.get('/api/products', async (req, res) => {
 
 // 3. Orders: Create order and deduct stock
 app.post('/api/orders', async (req, res) => {
-    const { cart, subtotal, tax, total, paymentMethod, amountReceived, change } = req.body;
+    const { cart, subtotal, tax, total, paymentMethod, amountReceived, change, cashierName } = req.body;
 
     if (!cart || cart.length === 0) {
         return res.status(400).json({ success: false, message: 'Cart is empty' });
@@ -98,7 +98,7 @@ app.post('/api/orders', async (req, res) => {
                 items: cart.map(item => `${item.qty}x ${item.name}`).join(', '),
                 metode: paymentMethod.toUpperCase(),
                 total: 'Rp ' + total.toLocaleString('id-ID'),
-                kasir: 'Muhammad Fardhan Ilmansyah'
+                kasir: cashierName || 'Staff TimDubes'
             };
             fetch(GOOGLE_SHEETS_URL, {
                 method: 'POST',
@@ -123,7 +123,7 @@ app.post('/api/orders', async (req, res) => {
                         { name: "Daftar Pesanan", value: itemsList || "Tidak ada item", inline: false }
                     ],
                     timestamp: new Date().toISOString(),
-                    footer: { text: "Kasir: Muhammad Fardhan Ilmansyah" }
+                    footer: { text: "Kasir: " + (cashierName || "Staff TimDubes") }
                 }]
             };
             fetch(DISCORD_WEBHOOK_URL, {

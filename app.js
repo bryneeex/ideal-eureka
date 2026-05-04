@@ -38,6 +38,14 @@ const formatRupiah = (number) => {
     }).format(number);
 };
 
+// --- User Initialization ---
+const userData = JSON.parse(localStorage.getItem('user') || '{}');
+if (userData.full_name) {
+    document.querySelector('.user-info h4').textContent = userData.full_name;
+    document.querySelector('.user-info p').textContent = userData.role === 'admin' ? 'Administrator' : 'Kasir';
+}
+
+
 // Render Products Grid
 const renderProducts = () => {
     productGrid.innerHTML = '';
@@ -423,7 +431,8 @@ confirmPaymentBtn.addEventListener('click', async () => {
             total: currentTotal,
             paymentMethod: paymentMethod,
             amountReceived: received,
-            change: change
+            change: change,
+            cashierName: userData.full_name || 'Staff TimDubes'
         };
 
         const res = await fetch('/api/orders', {

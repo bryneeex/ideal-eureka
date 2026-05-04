@@ -19,8 +19,19 @@ async function initDb() {
                 id SERIAL PRIMARY KEY,
                 username VARCHAR(100) UNIQUE NOT NULL,
                 password VARCHAR(255) NOT NULL,
+                full_name VARCHAR(255),
                 role VARCHAR(50) DEFAULT 'kasir'
             )
+        `);
+
+        // Migrasi: Tambah kolom full_name jika belum ada (untuk DB yang sudah running)
+        await client.query(`
+            DO $$ 
+            BEGIN 
+                IF NOT EXISTS (SELECT 1 FROM information_schema.columns WHERE table_name='users' AND column_name='full_name') THEN
+                    ALTER TABLE users ADD COLUMN full_name VARCHAR(255);
+                END IF;
+            END $$;
         `);
 
         // Create Products Table
@@ -62,12 +73,19 @@ async function initDb() {
             )
         `);
 
-        // Seed Admin User
-        const adminCheck = await client.query("SELECT id FROM users WHERE username = 'admin'");
-        if (adminCheck.rows.length === 0) {
-            await client.query("INSERT INTO users (username, password, role) VALUES ('admin', 'admin', 'admin')");
-            console.log('Admin user seeded.');
+        // Seed Users
+        const usersToSeed = [
+            ['admin', 'admin', 'Muhammad Fardhan Ilmansyah', 'admin'],
+            ['admin1', 'admin1', 'Raditya Caesar Gozal', 'admin']
+        ];
+
+        for (const u of usersToSeed) {
+            await client.query(
+                "INSERT INTO users (username, password, full_name, role) VALUES ($1, $2, $3, $4) ON CONFLICT (username) DO UPDATE SET full_name = $3",
+                u
+            );
         }
+        console.log('Admin users synchronized.');
 
         // Seed Dummy Products
         const productCheck = await client.query("SELECT COUNT(*) as count FROM products");
