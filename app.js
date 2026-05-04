@@ -254,7 +254,7 @@ document.body.insertAdjacentHTML('beforeend', `
                 <!-- QRIS Section -->
                 <div id="qris-display" style="display:none;">
                     <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">Scan QR di bawah untuk membayar</p>
-                    <img id="qris-image" src="https://ibb.co/sJDpp2P0" 
+                    <img id="qris-image" src="https://i.ibb.co.com/czhHdtk/qr-ID1026497925101-15-04-26-1776267605-1776267605435.jpg" 
                         onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TimDubesCafe-QRIS'"
                         style="width: 220px; height: 220px; border-radius: 12px; border: 3px solid var(--accent); object-fit: contain; background: white; padding: 8px;">
                     <p style="margin-top: 12px; font-weight: 600; color: var(--success); font-size: 15px;">TimDubes Cafe</p>
