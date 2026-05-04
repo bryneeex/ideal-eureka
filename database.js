@@ -3,7 +3,11 @@ const { Pool } = require('pg');
 // Connect to PostgreSQL via DATABASE_URL environment variable (provided by Railway)
 const pool = new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+    ssl: process.env.DATABASE_URL ? { rejectUnauthorized: false } : false
+});
+
+pool.on('error', (err) => {
+    console.error('Unexpected error on idle client', err);
 });
 
 async function initDb() {
