@@ -171,11 +171,11 @@ app.put('/api/products/:id/stock', async (req, res) => {
 app.get('/api/reports/today', async (req, res) => {
     try {
         const result = await pool.query(`
-            SELECT
-                COUNT(id) as total_orders,
-                COALESCE(SUM(total), 0) as total_revenue
-            FROM orders
-            WHERE created_at::date = CURRENT_DATE AT TIME ZONE 'Asia/Jakarta'
+            SELECT 
+                COUNT(id) as total_orders, 
+                COALESCE(SUM(total), 0) as total_revenue 
+            FROM orders 
+            WHERE timezone('Asia/Jakarta', created_at)::date = (now() AT TIME ZONE 'Asia/Jakarta')::date
         `);
         res.json({ success: true, report: result.rows[0] });
     } catch (err) {

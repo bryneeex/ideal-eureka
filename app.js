@@ -453,6 +453,11 @@ confirmPaymentBtn.addEventListener('click', async () => {
             // Refetch products to get updated stock
             await fetchProducts();
             
+            // Update reports revenue automatically
+            if (typeof fetchReports === 'function') {
+                await fetchReports();
+            }
+            
             modalOverlay.classList.remove('active');
         } else {
             alert('Gagal memproses transaksi: ' + data.message);
