@@ -8,6 +8,9 @@ const PORT = process.env.PORT || 3000;
 // Discord Webhook URL
 const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1500836394602332244/OZEjil1yUPySeyS_q0Tx3qKoE_2UFOwycesIXH4PdaC6DU7T6hoDEsJRePIYVFcJ1oKL';
 
+// Google Sheets Webhook URL (isi setelah deploy Google Apps Script)
+const GOOGLE_SHEETS_URL = process.env.GOOGLE_SHEETS_URL || '';
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -86,6 +89,23 @@ app.post('/api/orders', async (req, res) => {
         }
 
         await client.query('COMMIT');
+
+        // Send Google Sheets Log
+        if (GOOGLE_SHEETS_URL) {
+            const sheetData = {
+                waktu: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' }),
+                orderNumber: orderNumber,
+                items: cart.map(item => `${item.qty}x ${item.name}`).join(', '),
+                metode: paymentMethod.toUpperCase(),
+                total: 'Rp ' + total.toLocaleString('id-ID'),
+                kasir: 'Muhammad Fardhan Ilmansyah'
+            };
+            fetch(GOOGLE_SHEETS_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(sheetData)
+            }).catch(err => console.error('Google Sheets Error:', err));
+        }
 
         // Send Discord Webhook
         if (DISCORD_WEBHOOK_URL) {

@@ -251,8 +251,19 @@ document.body.insertAdjacentHTML('beforeend', `
             </div>
             
             <div id="non-cash-section" style="display: none; text-align: center; padding: 20px 0;">
-                <i class="fa-solid fa-mobile-screen-button" style="font-size: 48px; color: var(--text-secondary); margin-bottom: 16px;"></i>
-                <p>Silakan arahkan pelanggan untuk melakukan pembayaran melalui mesin EDC atau scan kode QR.</p>
+                <!-- QRIS Section -->
+                <div id="qris-display" style="display:none;">
+                    <p style="font-size: 14px; color: var(--text-secondary); margin-bottom: 12px;">Scan QR di bawah untuk membayar</p>
+                    <img id="qris-image" src="https://ibb.co/sJDpp2P0" 
+                        onerror="this.src='https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=TimDubesCafe-QRIS'"
+                        style="width: 220px; height: 220px; border-radius: 12px; border: 3px solid var(--accent); object-fit: contain; background: white; padding: 8px;">
+                    <p style="margin-top: 12px; font-weight: 600; color: var(--success); font-size: 15px;">TimDubes Cafe</p>
+                </div>
+                <!-- Card/Debit Section -->
+                <div id="card-display">
+                    <i class="fa-regular fa-credit-card" style="font-size: 48px; color: var(--text-secondary); margin-bottom: 16px;"></i>
+                    <p style="color: var(--text-secondary);">Silakan arahkan pelanggan untuk melakukan pembayaran melalui mesin EDC.</p>
+                </div>
             </div>
         </div>
         
@@ -320,6 +331,15 @@ methodBtns.forEach(btn => {
         } else {
             cashInputSection.style.display = 'none';
             nonCashSection.style.display = 'block';
+            const qrisDisplay = document.getElementById('qris-display');
+            const cardDisplay = document.getElementById('card-display');
+            if (paymentMethod === 'qris') {
+                qrisDisplay.style.display = 'block';
+                cardDisplay.style.display = 'none';
+            } else {
+                qrisDisplay.style.display = 'none';
+                cardDisplay.style.display = 'block';
+            }
         }
     });
 });
